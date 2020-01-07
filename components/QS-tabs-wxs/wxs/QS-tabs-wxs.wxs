@@ -1,0 +1,106 @@
+function log(t) {
+	// console.log(t);
+}
+
+function transition(e, ins) {
+	var line = ins.selectComponent('#line');
+	var swiper = ins.selectComponent('#swiper');
+	var dataset = swiper.getDataset();
+	dataset = str2Obj(dataset);
+	var windowwidth = toNumber(dataset.windowwidth);
+	log('dataset:' + JSON.stringify(dataset));
+	var tabsinfo = dataset.tabsinfo || [];
+	tabsinfo = str2Obj(tabsinfo);
+	var current = toNumber(dataset.current) || 0;
+	log('current:' + current);
+	var tab = tabsinfo[current];
+	tab = str2Obj(tab);
+	if(tab) {
+		log('tab:' + JSON.stringify(tab));
+		var curTabDx = (toNumber(tab.left) + (toNumber(tab.width)/2));
+		log('curTabDx:' + curTabDx);
+		var newDx = e.detail.dx;
+		var nextCurrent = newDx>0?current+1:current-1;
+		log('nextCurrent:' + nextCurrent);
+		
+		var nextTab = tabsinfo[nextCurrent];
+		nextTab = str2Obj(nextTab);
+		var nextDx;
+		if(nextTab) {
+			nextDx = nextTab.left + nextTab.width/2;
+		}else{
+			nextDx = newDx>0?(curTabDx + 200): (curTabDx - 200);
+		}
+		log('nextDx:' + nextDx);
+		log('windowwidth:' + windowwidth);
+		log('newDx:' + newDx);
+		var dxScale = Math.abs(newDx)/windowwidth;
+		log('dxScale:' + dxScale);
+		var newScaleDx = (nextDx - curTabDx)*dxScale;
+		log('newScaleDx:' + newScaleDx);
+		var moveDx = (curTabDx + newScaleDx);
+		log('moveDx:' + moveDx);
+		line.setStyle({
+			'left': moveDx + 'px'
+		})
+	}
+}
+
+function tabsInfoChange(n, o, ins) {
+	setCurDx(ins, false, true, false);
+}
+
+function animationfinish(e, ins) {
+	setCurDx(ins, e.detail.current, false);
+	log('animationfinish:' + e.detail.current);
+	ins.callMethod('setCurrent', e.detail);
+}
+
+function setCurDx(ins, current, tabsChange, changeLineDx) {
+	var swiper = ins.selectComponent('#swiper');
+	var dataset = swiper.getDataset();
+	dataset = str2Obj(dataset);
+	log('dataset:' + JSON.stringify(dataset));
+	var line = ins.selectComponent('#line');
+	var tabsinfo = dataset.tabsinfo || [];
+	tabsinfo = str2Obj(tabsinfo);
+	var current = current!==false?current:(dataset.current || 0);
+	var tab = tabsinfo[current];
+	tab = str2Obj(tab);
+	log('tab:' + JSON.stringify(tab));
+	if(tab) {
+		var lineDx = (toNumber(tab.left) + toNumber(tab.width)/2);
+		log('changeLineDx:' + changeLineDx);
+		log('current:' + current);
+		if(changeLineDx !== false || current == 0) {
+			line.setStyle({
+				'left': lineDx + 'px'
+			})
+		}
+		var windowwidth = toNumber(dataset.windowwidth);
+		log('tabsChange:' + tabsChange);
+		ins.callMethod('setScrollLeft', {scrollLeft: (lineDx - (windowwidth/2)), tabsChange: tabsChange});
+	}
+}
+
+function str2Obj(str) {
+	// #ifdef H5
+	if(typeof str === 'string') {
+		return JSON.parse(str);
+	}
+	// #endif
+	return str;
+}
+
+function toNumber(str) {
+	// #ifdef H5
+	return Number(str);
+	// #endif
+	return str;
+}
+
+module.exports = {
+	transition: transition,
+	tabsInfoChange: tabsInfoChange,
+	animationfinish: animationfinish
+} 
