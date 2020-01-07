@@ -6,7 +6,7 @@
 </template>
 
 <script>
-	import QSTabsWxs from '@/components/QS-tabs-wxs/QS-tabs-wxs.vue';
+	import QSTabsWxs from '@/components/QS-tabs-wxs-list/QS-tabs-wxs-list.vue';
 	const {windowHeight} = uni.getSystemInfoSync();
 	export default {
 		components: {
