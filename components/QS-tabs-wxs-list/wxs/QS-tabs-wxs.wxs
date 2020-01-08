@@ -42,6 +42,7 @@ function transition(e, ins) {
 		log('moveDx:' + moveDx);
 		line.setStyle({
 			'left': moveDx + 'px'
+			// 'transform': 'translateX(' + moveDx + 'px)'
 		})
 	}
 }
@@ -75,6 +76,7 @@ function setCurDx(ins, current, tabsChange, changeLineDx) {
 		if(changeLineDx !== false || current == 0) {
 			line.setStyle({
 				'left': lineDx + 'px'
+				// 'transform': 'translateX(' + lineDx + 'px)'
 			})
 		}
 		var windowwidth = toNumber(dataset.windowwidth);

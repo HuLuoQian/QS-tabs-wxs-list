@@ -1,6 +1,10 @@
 <template>
 	<view class="container">
-		<view class="tabs-container">
+		<view 
+		class="tabs-container"
+		:style="{
+			'background-color': tabs[getCurrent]?(tabs[getCurrent].tabsBackgroundColor || tabsBackgroundColor):tabsBackgroundColor
+		}">
 			<scroll-view 
 			id="tabs-scroll"
 			scroll-x 
@@ -11,13 +15,16 @@
 				class="tabs-scroll-box"
 				:style="{
 					'height': tabHeight,
-					'line-height': tabHeight,
-					'font-size': fontSize
+					'line-height': tabHeight
 				}">
 					<view 
 					class="tabs-scroll-item" 
 					:style="{
-						'width': minWidth
+						'min-width': minWidth,
+						'margin': '0 ' + space,
+						'font-size':  getSwiperCurrent===index?activeFontSize:fontSize,
+						'color': getSwiperCurrent===index?(tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].activeFontColor || activeFontColor || tabsFontColor):(activeFontColor || tabsFontColor)):tabsFontColor,
+						'font-weight': String(activeBold)==='true'?(getSwiperCurrent===index?'bold':'0'):'0'
 					}"
 					v-for="(item, index) in tabs" 
 					:id="preId + index"
@@ -44,7 +51,7 @@
 			id="swiper"
 			:style="{
 				'height': getSwiperHieght + 'px',
-				'background-color': '#f8f8f8'
+				'background-color': swiperBackgroundColor
 			}"
 			:current="getSwiperCurrent"
 			@transition="QSTABSWXS.transition"
@@ -54,7 +61,13 @@
 			:data-current="getCurrent"
 			:data-windowwidth="windowWidth"
 			@animationfinish="QSTABSWXS.animationfinish">
-				<swiper-item v-for="(item, index) in tabs" :key="index">
+				<swiper-item 
+				v-for="(item, index) in tabs" 
+				:key="index"
+				class="swiper-item"
+				:style="{
+					'background-color': item.swiperItemBackgroundColor || 'rgba(255,255,255,0)'
+				}">
 					<templateDef ref="QSTabsWxsRef" :tab="item" :index="index"></templateDef>
 				</swiper-item>
 			</swiper>
@@ -75,6 +88,10 @@
 			minWidth: {
 				type: String,
 				default: '250rpx'
+			},
+			space: {
+				type: String,
+				default: '10px'
 			},
 			tabHeight: {
 				type: String,
@@ -115,6 +132,30 @@
 			fontSize: {
 				type: String,
 				default: '28rpx'
+			},
+			activeFontSize: {
+				type: String,
+				default: '32rpx'
+			},
+			swiperBackgroundColor: {
+				type: String,
+				default: '#f8f8f8'
+			},
+			tabsBackgroundColor: {
+				type: String,
+				default: '#fff'
+			},
+			tabsFontColor: {
+				type: String,
+				default: '#999'
+			},
+			activeFontColor: {
+				type: String,
+				default: '#000'
+			},
+			activeBold: {
+				type: [Boolean, String],
+				default: true
 			}
 		},
 		data() {
@@ -300,6 +341,7 @@
 	}
 	.tabs-container{
 		width: 100%;
+		transition: background-color .3s;
 	}
 	.tabs-scroll{
 		width: 100%;
@@ -315,9 +357,13 @@
 	.tabs-scroll-item{
 		display: inline-block;
 		text-align: center;
+		transition: color, font-size .3s;
 	}
 	.swiper-container{
 		width: 100%;
+	}
+	.swiper-item{
+		transition: background-color .3s;
 	}
 	.line{
 		position: absolute;
