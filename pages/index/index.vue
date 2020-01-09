@@ -70,8 +70,8 @@
 			this.$refs.QSTabsWxs.setTabs(tabs);
 			this.getTopViewHeight();
 			// this.$refs.QSTabsWxs.setDisabled(true);	//	禁用组件
-			setTimeout(()=>{	//重置tabs测试
-				this.$refs.QSTabsWxs.setTabs(tabs2);
+			setTimeout(()=>{
+				this.$refs.QSTabsWxs.setTabs(tabs2);	//重置tabs测试
 				// this.$refs.QSTabsWxs.setDisabled(false);	//	取消禁用组件
 			}, 3000)
 		},
