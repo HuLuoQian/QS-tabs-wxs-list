@@ -296,7 +296,7 @@
 					this.initStatus = new Array(arr.length);
 					this.$nextTick(()=>{	//H5需要nextTick后能拿到布局信息
 						setTimeout(async ()=>{	//QQ小程序需要setTimeout后能拿到布局信息
-							await this.getTabsInfo(true);
+							this.getTabsInfo();
 							_app.log('初始化');
 							const defCurrent = this._getDefCurrent();
 							_app.log('defCurrent:' + defCurrent);

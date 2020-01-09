@@ -11,7 +11,7 @@
 			<view class="scroll-container">
 				<block v-if="getShow">	<!-- 保证性能勿删 -->
 					<!-- 自行实现页面样式展示 -->
-					<view class="scroll-item" v-for="(item, index) in list" :key="index">
+					<view class="scroll-item" v-for="(item, ind) in list" :key="ind" @tap="itemClick(ind)">
 						<image 
 						class="scroll-item-image"
 						src="http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg" 
@@ -20,11 +20,11 @@
 							{{item}}
 						</view>
 					</view>
+					<!-- 列表状态展示 -->
+					<view class="statusText" @tap="getList(false, true, false)">
+						{{statusText.text || '数据未加载'}}
+					</view>
 				</block>
-				<!-- 列表状态展示 -->
-				<view class="statusText" @tap="getList(false, true, false)">
-					{{statusText.text || '数据未加载'}}
-				</view>
 			</view>
 		</scroll-view>
 	</view>
@@ -141,6 +141,11 @@
 					noDataText: false,	//访问接口后若数据长度为0则可自定义为空时文字
 					
 					refreshClear: true,	//刷新时是否清空数据
+				})
+			},
+			itemClick(ind) {
+				uni.showToast({
+					title: `第${this.index}列 第${ind}项`
 				})
 			}
 		}

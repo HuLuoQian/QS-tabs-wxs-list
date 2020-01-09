@@ -8,8 +8,8 @@
 		tabsBackgroundColor="#000" 
 		swiperBackgroundColor="#000" 
 		minWidth="125rpx" 
-		defCurrent="2" 
 		:height="windowHeight-topViewHeight"></QSTabsWxs>
+		<!-- defCurrent="2" -->
 	</view>
 </template>
 
@@ -60,7 +60,7 @@
 				}
 			});
 			let s = 0;
-			let tabs2 = Array(2).fill('').map(() => {
+			let tabs2 = Array(50).fill('').map(() => {
 				const name = 'tab_' + s++;
 				return {
 					name,
@@ -71,7 +71,7 @@
 			this.getTopViewHeight();
 			// this.$refs.QSTabsWxs.setDisabled(true);	//	禁用组件
 			setTimeout(()=>{	//重置tabs测试
-				// this.$refs.QSTabsWxs.setTabs(tabs2);
+				this.$refs.QSTabsWxs.setTabs(tabs2);
 				// this.$refs.QSTabsWxs.setDisabled(false);	//	取消禁用组件
 			}, 3000)
 		},
