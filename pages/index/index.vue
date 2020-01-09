@@ -69,9 +69,9 @@
 			});
 			this.$refs.QSTabsWxs.setTabs(tabs);
 			this.getTopViewHeight();
-			setTimeout(()=>{
+			/* setTimeout(()=>{	//重置tabs测试
 				this.$refs.QSTabsWxs.setTabs(tabs2);
-			}, 3000)
+			}, 3000) */
 		},
 		methods: {
 			getTopViewHeight() {

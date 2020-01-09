@@ -4,7 +4,7 @@ let tab = Array(10).fill('').map(() => 'tab_' + n++);
 let DATA = {};
 for (let i = 0; i < tab.length; i++) {
 	const arr = [];
-	for (let k = 0; k < 20; k++) {
+	for (let k = 0; k < 100; k++) {
 		arr.push(tab[i] + ' ' + k);
 	}
 	DATA[tab[i]] = arr;

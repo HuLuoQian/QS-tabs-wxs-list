@@ -84,7 +84,7 @@
 				:style="{
 					'background-color': item.swiperItemBackgroundColor || 'rgba(255,255,255,0)'
 				}">
-					<templateDef ref="QSTabsWxsRef" :tab="item" :index="index"></templateDef>
+					<templateDef ref="QSTabsWxsRef" :current="getCurrent" :tab="item" :index="index"></templateDef>
 				</swiper-item>
 			</swiper>
 		</view>

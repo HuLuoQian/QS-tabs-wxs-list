@@ -5,18 +5,22 @@
 		scroll-y 
 		class="scrollView"  
 		lower-threshold="200"
+		:scroll-top="scrollTop"
+		@scroll="scrollFn($event)"
 		@scrolltolower="getList(false, false, false)">
 			<view class="scroll-container">
 				<!-- 自行实现页面样式展示 -->
-				<view class="scroll-item" v-for="(item, index) in list" :key="index">
-					<image 
-					class="scroll-item-image"
-					src="http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg" 
-					mode="aspectFill"></image>
-					<view class="scroll-item-text">
-						{{item}}
+				<block v-if="getShow">
+					<view class="scroll-item" v-for="(item, index) in list" :key="index">
+						<image 
+						class="scroll-item-image"
+						src="http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg" 
+						mode="aspectFill"></image>
+						<view class="scroll-item-text">
+							{{item}}
+						</view>
 					</view>
-				</view>
+				</block>
 				<!-- 列表状态展示 -->
 				<view class="statusText" @tap="getList(false, true, false)">
 					{{statusText.text || '数据未加载'}}
@@ -44,6 +48,10 @@
 			index: {
 				type: [String, Number],
 				default: ''
+			},
+			current: {
+				type: [String, Number],
+				default: ''
 			}
 		},
 		data() {
@@ -54,7 +62,32 @@
 					pageSize: 10,
 					tabId: this.tab.id
 				},
-				statusText: {}
+				statusText: {},
+				scrollTop: 0,
+				oldScrollTop: 0
+			}
+		},
+		watch: {
+			getShow(newValue, oldValue) {
+				if(newValue === true) {
+					this.$nextTick(()=>{
+						this.scrollTop = this.oldScrollTop;
+					})
+				}
+			}
+		},
+		computed: {
+			getShow() {
+				if(this.index!=='' && this.current!=='') {
+					const count = Math.abs(Number(this.index) - Number(this.current));
+					if(count <= 1) {
+						return true;
+					}else{
+						return false;
+					}
+				}else{
+					return true;
+				}
 			}
 		},
 		created() {
@@ -62,6 +95,10 @@
 			// console.log('component - created - index:' + this.index);
 		},
 		methods: {
+			scrollFn(e) {
+				if(e.detail.scrollTop !== 0)
+				this.oldScrollTop = e.detail.scrollTop;
+			},
 			init() {
 				// console.log('component - init - index:' + this.index);
 				this.getList(true);
