@@ -9,8 +9,8 @@
 		@scroll="scrollFn($event)"
 		@scrolltolower="getList(false, false, false)">
 			<view class="scroll-container">
-				<!-- 自行实现页面样式展示 -->
-				<block v-if="getShow">
+				<block v-if="getShow">	<!-- 保证性能勿删 -->
+					<!-- 自行实现页面样式展示 -->
 					<view class="scroll-item" v-for="(item, index) in list" :key="index">
 						<image 
 						class="scroll-item-image"
@@ -45,11 +45,11 @@
 					return {}
 				}
 			},
-			index: {
+			index: {	// 保证性能勿删
 				type: [String, Number],
 				default: ''
 			},
-			current: {
+			current: {	// 保证性能勿删
 				type: [String, Number],
 				default: ''
 			}
@@ -63,20 +63,21 @@
 					tabId: this.tab.id
 				},
 				statusText: {},
-				scrollTop: 0,
-				oldScrollTop: 0
+				scrollTop: 0,	// 保证性能勿删
+				oldScrollTop: 0,	// 保证性能勿删
+				setScrollTopcount: 0	// 保证性能勿删
 			}
 		},
 		watch: {
+			// 保证性能勿删
 			getShow(newValue, oldValue) {
 				if(newValue === true) {
-					this.$nextTick(()=>{
-						this.scrollTop = this.oldScrollTop;
-					})
+					this.toOldScrollTop();
 				}
 			}
 		},
 		computed: {
+			// 保证性能勿删
 			getShow() {
 				if(this.index!=='' && this.current!=='') {
 					const count = Math.abs(Number(this.index) - Number(this.current));
@@ -86,7 +87,7 @@
 						return false;
 					}
 				}else{
-					return true;
+					return false;
 				}
 			}
 		},
@@ -95,9 +96,18 @@
 			// console.log('component - created - index:' + this.index);
 		},
 		methods: {
-			scrollFn(e) {
-				if(e.detail.scrollTop !== 0)
-				this.oldScrollTop = e.detail.scrollTop;
+			scrollFn(e) {	// 保证性能勿删
+				if(e.detail.scrollTop !== 0) {
+					this.oldScrollTop = e.detail.scrollTop;
+				}
+				
+			},
+			toOldScrollTop() {	// 保证性能勿删
+				this.$nextTick(()=>{
+					setTimeout(()=>{
+						this.scrollTop = (this.setScrollTopcount++ % 2 === 0)?this.oldScrollTop + 1: this.oldScrollTop - 1;
+					}, 0)
+				})
 			},
 			init() {
 				// console.log('component - init - index:' + this.index);
@@ -128,7 +138,9 @@
 					force, //强制标识, 若为true则会忽略等待标识为true时的跳过操作
 					doEvent, //进入状态判断标识, 若为true则会进入判断列表status而进行相应操作
 
-					noDataText: false	//访问接口后若数据长度为0则可自定义为空时文字
+					noDataText: false,	//访问接口后若数据长度为0则可自定义为空时文字
+					
+					refreshClear: true,	//刷新时是否清空数据
 				})
 			}
 		}

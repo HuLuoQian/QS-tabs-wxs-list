@@ -1,4 +1,6 @@
-# 注意: 目前若直接引入组件到项目中会报错, 因为方便示例演示, 在组件目录/components/QS-tabs-wxs-template-def.vue 中 的 export default {} 代码块最前面 有引入示例用的js
+# QQ交流群: 750104037 [点我加入](https://jq.qq.com/?_wv=1027&k=5OyZoXa)
+
+# 注意: 目前若直接引入组件到项目中会报错, 因为方便示例演示, 在组件目录/components/QS-tabs-wxs-template-def.vue中的script标签最前面有引入示例用的js
 
 # 快速指引
 ### [简介](#introduction)
@@ -26,7 +28,7 @@
     |   |-- QS-tabs-wxs-list	//组件文件夹
     |       |-- QS-tabs-wxs-list.vue	//页面中引入使用的组件文件
     |       |-- components	//组件中应用的组件文件，可自定义多个以便实现业务需求
-    |       |   |-- QS-tabs-wxs-template-def.vue	//默认
+    |       |   |-- QS-tabs-wxs-template-def.vue	//示例列表模板
     |       |-- js
     |       |   |-- config.js
     |       |   |-- pageDemand.js	//分页加载js
@@ -56,6 +58,7 @@
 ### * 需要开发者自行计算该组件的高度, 并传入属性height中, 单位px
 ### * 组件内必须拥有初始调用函数, 若组件内的初始调用函数名称不为init, 必须传入initFnName属性指定初始调用函数名称
 ### * 目前没有实现下拉的刷新， 但是有点击tab刷新功能
+### * 请不要在列表中使用video、textarea等原生组件
 
 # <span id="props">传入参数</span>
 ```
@@ -83,7 +86,7 @@ lineHieght: {	//线条高度
 	type: String,
 	default: '2px'
 },
-lineColor: {	//默认线条颜色
+lineColor: {	//线条颜色
 	type: String,
 	default: '#f1505c'
 },
@@ -96,11 +99,11 @@ defCurrent: {	//默认当前项
 	default: 0
 },
 autoCenter: {	//scrollview自动居中
-	type: Boolean,
+	type: [Boolean, String],
 	default: true
 },
 tapTabRefresh: {	//点击当前项tab触发组件内部init函数
-	type: Boolean,
+	type: [Boolean, String],
 	default: true
 },
 fontSize: {	//tab默认字体大小
@@ -111,11 +114,11 @@ activeFontSize: {	//当前项字体大小
 	type: String,
 	default: '32rpx'
 },
-swiperBackgroundColor: {	//swiper默认背景颜色
+swiperBackgroundColor: {	//swiper背景颜色
 	type: String,
 	default: '#f8f8f8'
 },
-tabsBackgroundColor: {	//tabs默认背景颜色
+tabsBackgroundColor: {	//tabs背景颜色
 	type: String,
 	default: '#fff'
 },
@@ -134,15 +137,20 @@ activeBold: {	//当前项字体加粗
 initFnName: {	//初始调用函数名称(组件内部)
 	type: String,
 	default: 'init'
+},
+type: {	//用于区分展示不同列表模板的标识
+	type: String,
+	default: 'default'
 }
 ```
 # <span id="refs">ref调用函数</span>
 | 方法名| 返回值| 传入参数| 说明|
 |------|------|------|------|
 | setTabs| | tabs 详见[tabs参数详解](#tabs)| 设置tabs|
+| setDisabled| | Boolean| 设置组件是否可以被点击和滑动|
 
 # <span id="tabs">tabs参数详解</span>
-注: tabs由组件ref实例调用setTabs方法设置
+### 注: tabs由组件ref实例调用setTabs方法设置
 ```
 |tabs Array
 |----String
@@ -157,6 +165,7 @@ initFnName: {	//初始调用函数名称(组件内部)
 
 # <span id="use-steps">使用步骤</span>
 ## Step 1:
+### 引入并注册组件
 ```javascript
 <script>
 //页面中引入组件实例
@@ -169,6 +178,7 @@ export default {
 </script>
 ```
 ## Step 2:
+### template标签内写入并绑定ref与动态高度
 ```html
 <template>
 	<view>
@@ -179,6 +189,7 @@ export default {
 ```
 
 ## Step 3:
+### 实现计算组件高度方法
 ```javascript
 <script>
 //页面中引入组件实例
@@ -203,6 +214,7 @@ export default {
 ```
 
 ## Step 4:
+### 设置tabs
 ```javascript
 //页面中引入组件实例
 import QSTabsWxsList from '组件路径';
@@ -229,6 +241,8 @@ export default {
 }
 </script>
 ```
+## Step 5:
+### 后续需要详细看示例列表获取数据与分页加载的实现
 
 
 

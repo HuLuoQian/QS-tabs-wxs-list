@@ -69,9 +69,11 @@
 			});
 			this.$refs.QSTabsWxs.setTabs(tabs);
 			this.getTopViewHeight();
-			/* setTimeout(()=>{	//重置tabs测试
-				this.$refs.QSTabsWxs.setTabs(tabs2);
-			}, 3000) */
+			// this.$refs.QSTabsWxs.setDisabled(true);	//	禁用组件
+			setTimeout(()=>{	//重置tabs测试
+				// this.$refs.QSTabsWxs.setTabs(tabs2);
+				// this.$refs.QSTabsWxs.setDisabled(false);	//	取消禁用组件
+			}, 3000)
 		},
 		methods: {
 			getTopViewHeight() {

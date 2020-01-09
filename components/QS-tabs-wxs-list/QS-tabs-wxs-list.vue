@@ -44,7 +44,6 @@
 						</view>
 					</view>
 					
-					<!-- 'width': lineWidth>1?lineWidth + 'px':, -->
 					<view 
 					id="line" 
 					class="line"
@@ -84,9 +83,22 @@
 				:style="{
 					'background-color': item.swiperItemBackgroundColor || 'rgba(255,255,255,0)'
 				}">
-					<templateDef ref="QSTabsWxsRef" :current="getCurrent" :tab="item" :index="index"></templateDef>
+					<!-- 需自行增加列表模板并根据传入的type判断, 展示不同的列表模板 -->
+					<block v-if="type === 'xxx'">
+						
+					</block>
+					<block v-else>
+						<templateDef ref="QSTabsWxsRef" :current="getCurrent" :tab="item" :index="index"></templateDef>
+					</block>
 				</swiper-item>
 			</swiper>
+		</view>
+		<view 
+		class="disabled" 
+		v-if="disabled"
+		@touchmove.stop="voidFn"
+		@tap.stop="voidFn">
+			
 		</view>
 	</view>
 </template>
@@ -139,11 +151,11 @@
 				default: 0
 			},
 			autoCenter: {	//scrollview自动居中
-				type: Boolean,
+				type: [Boolean, String],
 				default: true
 			},
 			tapTabRefresh: {	//点击当前项tab触发组件内部init函数
-				type: Boolean,
+				type: [Boolean, String],
 				default: true
 			},
 			fontSize: {	//tab默认字体大小
@@ -177,6 +189,10 @@
 			initFnName: {	//初始调用函数名称(组件内部)
 				type: String,
 				default: 'init'
+			},
+			type: {	//用于区分展示不同列表模板的标识
+				type: String,
+				default: 'default'
 			}
 		},
 		data() {
@@ -194,7 +210,8 @@
 				initStatus: [],
 				tabsHeight: 44,
 				wxsLineWidth: 0,
-				tabsInfoChangeBl: false
+				tabsInfoChangeBl: false,
+				disabled: false
 			}
 		},
 		computed: {
@@ -209,6 +226,9 @@
 			}
 		},
 		methods: {
+			setDisabled(bl) {
+				this.disabled = bl;
+			},
 			setWxsLineWidth(lineWidth) {
 				_app.log('触发了设置线条宽度:' + lineWidth);
 				this.wxsLineWidth = lineWidth;
@@ -300,7 +320,7 @@
 			_doInit({index, init, tap, slide} = {}) {
 				try{
 					const bl_status = this.initStatus[index] === true;
-					const bl_tapTabRefresh =  this.tapTabRefresh;
+					const bl_tapTabRefresh =  String(this.tapTabRefresh) === 'true';
 					if(bl_status && slide) return;
 					if(bl_status && tap) {
 						if(!bl_tapTabRefresh) return;
@@ -346,9 +366,10 @@
 			},
 			setScrollLeft(obj) {
 				_app.log('setScrollLeft:' + JSON.stringify(obj));
-				if(!this.autoCenter && !Boolean(obj.tabsChange)) return;
+				if((!(String(this.autoCenter) === 'true')) && !Boolean(obj.tabsChange)) return;
 				this.scrollLeft = Number(obj.scrollLeft);
-			}
+			},
+			voidFn() {}
 		}
 	}
 </script>
@@ -383,9 +404,17 @@
 		box-sizing: border-box;
 	}
 	.container{
+		position: relative;
 		width: 100%;
 		display: flex;
 		flex-direction: column;
+	}
+	.disabled{
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
 	}
 	.tabs-container{
 		width: 100%;

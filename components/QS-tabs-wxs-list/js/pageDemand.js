@@ -51,7 +51,8 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 		force,	//强制标识, 若为true则会忽略等待标识为true时的跳过操作
 		doEvent,	//进入状态判断标识, 若为true则会进入判断列表status而进行相应操作
 		
-		noDataText	//访问接口后若数据长度为0则可自定义为空时文字
+		noDataText,	//访问接口后若数据长度为0则可自定义为空时文字
+		refreshClear	//刷新时是否清空数据
 	} = obj;
 	waitingName = waitingName || 'getting';
 	if (_this[waitingName] && !force) return; //节流
@@ -84,6 +85,10 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 	if (refresh) {	//刷新, 重置为第一页
 		_this[sendDataName][pageNumName] = 1;
 		_this[lastPageName] = undefined;	//重置最后一页状态
+		
+		if(refreshClear) {
+			_this[setName] = [];
+		}
 	}
 	
 	//浅拷贝携带数据对象
