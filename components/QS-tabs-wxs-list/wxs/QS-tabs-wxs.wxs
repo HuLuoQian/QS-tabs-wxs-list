@@ -1,5 +1,7 @@
+var n_tabsInfoChangeBl = false;	//确保外部tabsInfo改变
+
 function log(t) {
-	// console.log(t);
+	// log(t);
 }
 
 function transition(e, ins) {
@@ -7,17 +9,17 @@ function transition(e, ins) {
 	var swiper = ins.selectComponent('#swiper');
 	var dataset = swiper.getDataset();
 	dataset = str2Obj(dataset);
-	var windowwidth = toNumber(dataset.windowwidth);
+	var windowwidth = parseFloat(dataset.windowwidth);
 	log('dataset:' + JSON.stringify(dataset));
 	var tabsinfo = dataset.tabsinfo || [];
 	tabsinfo = str2Obj(tabsinfo);
-	var current = toNumber(dataset.current) || 0;
+	var current = parseInt(dataset.current) || 0;
 	log('current:' + current);
 	var tab = tabsinfo[current];
 	tab = str2Obj(tab);
 	if(tab) {
 		log('tab:' + JSON.stringify(tab));
-		var curTabDx = (toNumber(tab.left) + (toNumber(tab.width)/2));
+		var curTabDx = (parseFloat(tab.left) + (parseFloat(tab.width)/2));
 		log('curTabDx:' + curTabDx);
 		var newDx = e.detail.dx;
 		var nextCurrent = newDx>0?current+1:current-1;
@@ -40,22 +42,42 @@ function transition(e, ins) {
 		log('newScaleDx:' + newScaleDx);
 		var moveDx = (curTabDx + newScaleDx);
 		log('moveDx:' + moveDx);
+		var lineWidth = dataset.linewidth;
+		lineWidth = parseFloat(lineWidth);
+		log('lineWidth:' +lineWidth);
+		lineWidth = lineWidth>1?lineWidth:tab.width*lineWidth;
+		var setDx = (moveDx - lineWidth/2);
 		line.setStyle({
-			'left': moveDx + 'px'
-			// 'transform': 'translateX(' + moveDx + 'px)'
+			'transform': 'translateX(' + setDx + 'px)'
 		})
 	}
+	return false;
 }
 
 function tabsInfoChange(n, o, ins) {
-	setCurDx(ins, false, true, false);
+	var swiper = ins.selectComponent('#swiper');
+	var dataset = swiper.getDataset();
+	var tabsInfoChangeBl = dataset.tabsinfochangebl;
+	if(n_tabsInfoChangeBl !== tabsInfoChangeBl){
+		n_tabsInfoChangeBl = tabsInfoChangeBl;
+		log('触发了tabsInfoChange方法');
+		setCurDx(ins, false, true, false);
+	}
+	return false;
 }
 
 function animationfinish(e, ins) {
+	log('触发了animationfinish方法:' + e.detail.current);
 	setCurDx(ins, e.detail.current, false);
-	log('animationfinish:' + e.detail.current);
 	ins.callMethod('setCurrent', e.detail);
+	return false;
 }
+
+ function swiperChange(e, ins) {
+	log('触发了swiperChange方法:' + e.detail.current);
+	setCurDx(ins, e.detail.current, false, false);
+	return false;
+ }
 
 function setCurDx(ins, current, tabsChange, changeLineDx) {
 	var swiper = ins.selectComponent('#swiper');
@@ -65,44 +87,56 @@ function setCurDx(ins, current, tabsChange, changeLineDx) {
 	var line = ins.selectComponent('#line');
 	var tabsinfo = dataset.tabsinfo || [];
 	tabsinfo = str2Obj(tabsinfo);
-	var current = current!==false?current:(dataset.current || 0);
+	var current = parseInt(current!==false?current:(dataset.current || 0));
 	var tab = tabsinfo[current];
 	tab = str2Obj(tab);
 	log('tab:' + JSON.stringify(tab));
 	if(tab) {
-		var lineDx = (toNumber(tab.left) + toNumber(tab.width)/2);
+		log('tab.left : ' + tab.left);
+		var lineDx = (parseFloat(tab.left) + parseFloat(tab.width)/2);
+		log('lineDx:' + lineDx);
 		log('changeLineDx:' + changeLineDx);
 		log('current:' + current);
 		if(changeLineDx !== false || current == 0) {
+			var lineWidth = dataset.linewidth;
+			lineWidth = parseFloat(lineWidth);
+			log('tab.width:' + tab.width);
+			log('lineWidth 1:' + lineWidth);
+			lineWidth = lineWidth>1?Math.abs(lineWidth):tab.width*lineWidth;
+			log('lineWidth 2:' + lineWidth);
+			ins.callMethod('setWxsLineWidth', lineWidth);
 			line.setStyle({
-				'left': lineDx + 'px'
-				// 'transform': 'translateX(' + lineDx + 'px)'
+				// 'left': lineDx + 'px'
+				'transform': 'translateX(' + (lineDx - lineWidth/2) + 'px)',
+				// 'width': lineWidth + 'px'
 			})
 		}
-		var windowwidth = toNumber(dataset.windowwidth);
+		var windowwidth = parseFloat(dataset.windowwidth);
 		log('tabsChange:' + tabsChange);
-		ins.callMethod('setScrollLeft', {scrollLeft: (lineDx - (windowwidth/2)), tabsChange: tabsChange});
+		var left = (lineDx - (windowwidth/2));
+		// ins.callMethod('setScrollLeft', {scrollLeft: left, tabsChange: tabsChange});
+		setScrollLeft(ins, {scrollLeft: left, tabsChange: tabsChange});
 	}
+	return false;
+}
+
+function setScrollLeft(ins, obj) {
+	obj.scrollLeft = obj.scrollLeft < 0? 0: obj.scrollLeft;
+	log('触发了setScrollLeft方法:' + JSON.stringify(obj));
+	ins.callMethod('setScrollLeft', obj);
+	return false;
 }
 
 function str2Obj(str) {
-	// #ifdef H5
 	if(typeof str === 'string') {
 		return JSON.parse(str);
 	}
-	// #endif
-	return str;
-}
-
-function toNumber(str) {
-	// #ifdef H5
-	return Number(str);
-	// #endif
 	return str;
 }
 
 module.exports = {
 	transition: transition,
 	tabsInfoChange: tabsInfoChange,
-	animationfinish: animationfinish
+	animationfinish: animationfinish,
+	swiperChange: swiperChange
 } 

@@ -3,7 +3,7 @@
 		<view 
 		class="tabs-container"
 		:style="{
-			'background-color': tabs[getCurrent]?(tabs[getCurrent].tabsBackgroundColor || tabsBackgroundColor):tabsBackgroundColor
+			'background-color': tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].tabsBackgroundColor || tabsBackgroundColor):tabsBackgroundColor
 		}">
 			<scroll-view 
 			id="tabs-scroll"
@@ -21,26 +21,38 @@
 					class="tabs-scroll-item" 
 					:style="{
 						'min-width': minWidth,
-						'margin': '0 ' + space,
-						'font-size':  getSwiperCurrent===index?activeFontSize:fontSize,
-						'color': getSwiperCurrent===index?(tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].activeFontColor || activeFontColor || tabsFontColor):(activeFontColor || tabsFontColor)):tabsFontColor,
-						'font-weight': String(activeBold)==='true'?(getSwiperCurrent===index?'bold':'0'):'0'
+						'padding': '0 ' + space
 					}"
 					v-for="(item, index) in tabs" 
 					:id="preId + index"
 					:key="index"
 					@tap="tabTap(index)">
-						{{item.name || item}}
+						<view class="hide_text" 
+						:style="{
+							'font-size': fontSize,
+							'opacity': 0
+						}">
+							{{item.name || item}}
+						</view>
+						<view class="abs_text"
+						:style="{
+							'font-size':  getSwiperCurrent===index?activeFontSize:fontSize,
+							'color': getSwiperCurrent===index?(tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].activeFontColor || activeFontColor || tabsFontColor):(activeFontColor || tabsFontColor)):tabsFontColor,
+							'font-weight': String(activeBold)==='true'?(getSwiperCurrent===index?'bold':'0'):'0'
+						}">
+							{{item.name || item}}
+						</view>
 					</view>
 					
+					<!-- 'width': lineWidth>1?lineWidth + 'px':, -->
 					<view 
 					id="line" 
 					class="line"
 					:style="{
-						'transition-duration': duration,
-						'width': lineWidth,
 						'height': lineHieght,
-						'background-color': lineColor
+						'width': wxsLineWidth + 'px',
+						'bottom': lineMarginBottom,
+						'background-color': tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].lineColor || lineColor):lineColor
 					}">
 					</view>
 				</view>
@@ -60,6 +72,10 @@
 			:data-tabsinfo="tabsInfo"
 			:data-current="getCurrent"
 			:data-windowwidth="windowWidth"
+			:data-linewidth="lineWidth"
+			:data-scrollleft="scrollLeft"
+			:data-tabsinfochangebl="tabsInfoChangeBl"
+			@change="QSTABSWXS.swiperChange"
 			@animationfinish="QSTABSWXS.animationfinish">
 				<swiper-item 
 				v-for="(item, index) in tabs" 
@@ -78,6 +94,7 @@
 <script lang="wxs" module="QSTABSWXS" src="./wxs/QS-tabs-wxs.wxs"></script>
 
 <script>
+	import _app from './js/config.js';
 	import templateDef from './components/QS-tabs-wxs-template-def.vue';
 	const {windowWidth} = uni.getSystemInfoSync();
 	export default {
@@ -85,77 +102,81 @@
 			templateDef
 		},
 		props: {
-			minWidth: {
+			minWidth: {	//tab最小宽度
 				type: String,
 				default: '250rpx'
 			},
-			space: {
+			space: {	//tab间距, 左右padding值
 				type: String,
 				default: '10px'
 			},
-			tabHeight: {
+			tabHeight: {	//tabs高度
 				type: String,
 				default: '44px'
 			},
-			height: {
+			height: {	//组件总高度, 需外部计算并传入
 				type: [Number, String],
 				default: 500
 			},
-			duration: {
-				type: String,
-				default: '.2s'
+			lineWidth: {	//线条宽度，若小于1则当做百分比计算
+				type: [Number, String],
+				default: .7
 			},
-			lineWidth: {
-				type: String,
-				default: '80rpx'
-			},
-			lineHieght: {
+			lineHieght: {	//线条高度
 				type: String,
 				default: '2px'
 			},
-			lineColor: {
+			lineColor: {	//线条颜色
 				type: String,
 				default: '#f1505c'
 			},
-			defCurrent: {
+			lineMarginBottom: {	//线条距离底部距离
 				type: [Number, String],
 				default: 0
 			},
-			autoCenter: {
+			defCurrent: {	//默认当前项
+				type: [Number, String],
+				default: 0
+			},
+			autoCenter: {	//scrollview自动居中
 				type: Boolean,
 				default: true
 			},
-			tapTabRefresh: {
+			tapTabRefresh: {	//点击当前项tab触发组件内部init函数
 				type: Boolean,
 				default: true
 			},
-			fontSize: {
+			fontSize: {	//tab默认字体大小
 				type: String,
 				default: '28rpx'
 			},
-			activeFontSize: {
+			activeFontSize: {	//当前项字体大小
 				type: String,
 				default: '32rpx'
 			},
-			swiperBackgroundColor: {
+			swiperBackgroundColor: {	//swiper背景颜色
 				type: String,
 				default: '#f8f8f8'
 			},
-			tabsBackgroundColor: {
+			tabsBackgroundColor: {	//tabs背景颜色
 				type: String,
 				default: '#fff'
 			},
-			tabsFontColor: {
+			tabsFontColor: {	//tabs默认字体颜色
 				type: String,
 				default: '#999'
 			},
-			activeFontColor: {
+			activeFontColor: {	//tabs当前项字体颜色
 				type: String,
 				default: '#000'
 			},
-			activeBold: {
+			activeBold: {	//当前项字体加粗
 				type: [Boolean, String],
 				default: true
+			},
+			initFnName: {
+				type: String,
+				default: 'init'
 			}
 		},
 		data() {
@@ -171,7 +192,9 @@
 				scrollLeft: 0,
 				count: 0,
 				initStatus: [],
-				tabsHeight: 44
+				tabsHeight: 44,
+				wxsLineWidth: 0,
+				tabsInfoChangeBl: false
 			}
 		},
 		computed: {
@@ -186,11 +209,15 @@
 			}
 		},
 		methods: {
+			setWxsLineWidth(lineWidth) {
+				_app.log('触发了设置线条宽度:' + lineWidth);
+				this.wxsLineWidth = lineWidth;
+			},
 			getTabsHeight() {
 				let view = uni.createSelectorQuery().in(this);
 				view.select('.tabs-container').boundingClientRect();
 				view.exec(res=>{
-					console.log('tabs高度:' + JSON.stringify(res));
+					_app.log('tabs高度:' + JSON.stringify(res));
 					this.tabsHeight = res[0].height;
 				})
 			},
@@ -202,11 +229,11 @@
 					view.select('#' + this.preId + i).boundingClientRect();
 				}
 				const fn = (cb) => {
-					// console.log('fn执行');
+					// _app.log('fn执行');
 					scroll.exec((data)=>{
-						// console.log('scroll布局信息:' + JSON.stringify(data));
+						_app.log('scroll布局信息:' + JSON.stringify(data));
 						view.exec((res) => {
-							// console.log('tabs布局信息:' + JSON.stringify(res));
+							_app.log('tabs布局信息:' + JSON.stringify(res));
 							const arr = [];
 							for (let i = 0; i < res.length; i++) {
 								const item = res[i];
@@ -220,40 +247,55 @@
 									// #endif
 								}
 							}
+							this.tabsInfoChangeBl = !this.tabsInfoChangeBl;
 							// #ifdef H5
 							this.tabsInfo = JSON.stringify(arr);
 							// #endif
 							// #ifndef H5
 							this.tabsInfo = arr;
 							// #endif
-							// console.log('tabsInfo:' + JSON.stringify(arr));
+							// _app.log('tabsInfo:' + JSON.stringify(arr));
 							if(cb && typeof cb === 'function') cb(arr);
 						})
 					})
 				}
 				if(returnPromise) {
 					return new Promise((resolve, reject)=>{
-						fn((arr)=>{
-							resolve(arr);
-						});
+						setTimeout(()=>{
+							fn((arr)=>{
+								resolve(arr);
+							});
+						}, 200)
 					})
 				}
 				fn();
 			},
 			setTabs(arr) {
-				this.tabs = arr;
-				this.initStatus = new Array(arr.length);
-				this.$nextTick(()=>{	//H5需要nextTick后能拿到布局信息
-					setTimeout(()=>{	//QQ小程序需要setTimeout后能拿到布局信息
-						this.getTabsInfo();
-						if(this.count++ === 0) {
+				const fn = ()=>{
+					this.tabs = arr;
+					this.initStatus = new Array(arr.length);
+					this.$nextTick(()=>{	//H5需要nextTick后能拿到布局信息
+						setTimeout(async ()=>{	//QQ小程序需要setTimeout后能拿到布局信息
+							await this.getTabsInfo(true);
+							_app.log('初始化');
 							const defCurrent = this._getDefCurrent();
+							_app.log('defCurrent:' + defCurrent);
 							this.swiperCurrent = defCurrent;
 							this._doInit({index: defCurrent, init: true});
 							this.getTabsHeight();
-						}
-					}, 0)
-				})
+						}, 0)
+					})
+				}
+				if(this.count++ === 0) {
+					fn();
+				}else{
+					this.tabs = [];
+					this.current = 0;
+					this.swiperCurrent = 0;
+					this.$nextTick(()=>{
+						setTimeout(fn, 0);
+					})
+				}
 			},
 			_doInit({index, init, tap, slide} = {}) {
 				try{
@@ -269,9 +311,15 @@
 					if(bl_status && init) return;
 					
 					const ref = this.$refs[this.refPre][index];
-					if(ref && ref.init && typeof ref.init === 'function') {
-						this.initStatus[index] = true;
-						ref.init();
+					if(ref) {
+						const initFn = ref[this.initFnName];
+						if(initFn && typeof initFn === 'function') {
+							_app.log('执行了组件内的init函数');
+							this.initStatus[index] = true;
+							initFn();
+						}else{
+							console.log(this.initFnName + 'not a function');
+						}
 					}else{
 						console.log('not find ref or init function');
 					}
@@ -286,7 +334,7 @@
 				return defCurrent>endCurrent?endCurrent:defCurrent;
 			},
 			setCurrent(obj) {	//由wxs内部触发
-				// console.log('设置current:' + JSON.stringify(obj));
+				// _app.log('设置current:' + JSON.stringify(obj));
 				const current = Number(obj.current);
 				this.current = current;
 				this.swiperCurrent = current;
@@ -297,7 +345,7 @@
 				this._doInit({index, tap: true});
 			},
 			setScrollLeft(obj) {
-				// console.log('setScrollLeft:' + JSON.stringify(obj));
+				_app.log('setScrollLeft:' + JSON.stringify(obj));
 				if(!this.autoCenter && !Boolean(obj.tabsChange)) return;
 				this.scrollLeft = Number(obj.scrollLeft);
 			}
@@ -355,9 +403,18 @@
 		display: block !important;
 	}
 	.tabs-scroll-item{
+		position: relative;
 		display: inline-block;
 		text-align: center;
 		transition: color, font-size .3s;
+	}
+	.abs_text{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		transition-property: color;
+		transition-duration: .3s; 
 	}
 	.swiper-container{
 		width: 100%;
@@ -372,7 +429,6 @@
 		width: 0;
 		height: 0;
 		transition-property: width, height, background-color, border;
-		transition-duration: .2s;
-		transform: translate(-50%, -100%);
+		transition-duration: .3s;
 	}
 </style>

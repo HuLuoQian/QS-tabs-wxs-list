@@ -1,7 +1,15 @@
 <template>
 	<view class="content">
 		<view class="topView">QS-tabs-wxs-list</view>
-		<QSTabsWxs ref="QSTabsWxs" activeFontColor="#fff" tabsFontColor="rgba(255,255,255,.7)" tabsBackgroundColor="#000" swiperBackgroundColor="#000" minWidth="100rpx" defCurrent="2" :height="windowHeight-topViewHeight"></QSTabsWxs>
+		<QSTabsWxs 
+		ref="QSTabsWxs" 
+		activeFontColor="#fff" 
+		tabsFontColor="rgba(255,255,255,.7)" 
+		tabsBackgroundColor="#000" 
+		swiperBackgroundColor="#000" 
+		minWidth="125rpx" 
+		defCurrent="2" 
+		:height="windowHeight-topViewHeight"></QSTabsWxs>
 	</view>
 </template>
 
@@ -48,13 +56,22 @@
 				const name = 'tab_' + n++;
 				return {
 					name,
-					id: name,
-					color: randomColor1(),
-					tabsBackgroundColor: randomColor1()
+					id: name
+				}
+			});
+			let s = 0;
+			let tabs2 = Array(2).fill('').map(() => {
+				const name = 'tab_' + s++;
+				return {
+					name,
+					id: name
 				}
 			});
 			this.$refs.QSTabsWxs.setTabs(tabs);
 			this.getTopViewHeight();
+			setTimeout(()=>{
+				this.$refs.QSTabsWxs.setTabs(tabs2);
+			}, 3000)
 		},
 		methods: {
 			getTopViewHeight() {
