@@ -174,7 +174,7 @@
 				type: [Boolean, String],
 				default: true
 			},
-			initFnName: {
+			initFnName: {	//初始调用函数名称(组件内部)
 				type: String,
 				default: 'init'
 			}

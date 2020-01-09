@@ -5,6 +5,7 @@
 ### [示例项目结构](#project-structure)
 ### [支持度](#support)
 ### [使用须知](#notice-for-use)
+### [传入参数](#props)
 
 # <span id="introduction">简介</span>
 使用wxs实现性能更好的tab线条滑动效果, 并使用swiper嵌套scrollview的方式集成了list<br />
@@ -49,5 +50,86 @@
 ### * 正式使用前请务必详细阅读`pageDemand.js`分页加载实现代码, 以便对接自己的接口, 否则需自行实现分页逻辑
 ### * 该组件的列表内容样式展示取决于引入的模板(示例中为`QS-tabs-wxs-template-def.vue`), 开发者可以自行增加不同的模板文件并由外部传自定义标识决定内部展示哪个模板
 ### * 需要开发者自行计算该组件的高度, 并传入属性height中, 单位px
+### * 若组件内的初始调用函数名称不为init, 必须传入initFnName属性指定初始调用函数名称
+
+# <span id="props">传入参数</span>
+```
+minWidth: {	//tab最小宽度
+	type: String,
+	default: '250rpx'
+},
+space: {	//tab间距, 左右padding值
+	type: String,
+	default: '10px'
+},
+tabHeight: {	//tabs高度
+	type: String,
+	default: '44px'
+},
+height: {	//组件总高度, 需外部计算并传入
+	type: [Number, String],
+	default: 500
+},
+lineWidth: {	//线条宽度，若小于1则当做百分比计算
+	type: [Number, String],
+	default: .7
+},
+lineHieght: {	//线条高度
+	type: String,
+	default: '2px'
+},
+lineColor: {	//线条颜色
+	type: String,
+	default: '#f1505c'
+},
+lineMarginBottom: {	//线条距离底部距离
+	type: [Number, String],
+	default: 0
+},
+defCurrent: {	//默认当前项
+	type: [Number, String],
+	default: 0
+},
+autoCenter: {	//scrollview自动居中
+	type: Boolean,
+	default: true
+},
+tapTabRefresh: {	//点击当前项tab触发组件内部init函数
+	type: Boolean,
+	default: true
+},
+fontSize: {	//tab默认字体大小
+	type: String,
+	default: '28rpx'
+},
+activeFontSize: {	//当前项字体大小
+	type: String,
+	default: '32rpx'
+},
+swiperBackgroundColor: {	//swiper背景颜色
+	type: String,
+	default: '#f8f8f8'
+},
+tabsBackgroundColor: {	//tabs背景颜色
+	type: String,
+	default: '#fff'
+},
+tabsFontColor: {	//tabs默认字体颜色
+	type: String,
+	default: '#999'
+},
+activeFontColor: {	//tabs当前项字体颜色
+	type: String,
+	default: '#000'
+},
+activeBold: {	//当前项字体加粗
+	type: [Boolean, String],
+	default: true
+},
+initFnName: {	//初始调用函数名称(组件内部)
+	type: String,
+	default: 'init'
+}
+```
 
 
