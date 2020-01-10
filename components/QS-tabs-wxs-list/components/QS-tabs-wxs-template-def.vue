@@ -21,7 +21,12 @@
 						</view>
 					</view>
 					<!-- 列表状态展示 -->
-					<view class="statusText" @tap="getList(false, true, false)">
+					<view 
+					class="statusText" 
+					@tap="getList(false, true, false)"
+					:style="{
+						'color': getColor
+					}">
 						{{statusText.text || '数据未加载'}}
 					</view>
 				</block>
@@ -51,6 +56,10 @@
 			},
 			current: {	// 保证性能勿删
 				type: [String, Number],
+				default: ''
+			},
+			type: {
+				type: String,
 				default: ''
 			}
 		},
@@ -89,6 +98,21 @@
 				}else{
 					return false;
 				}
+			},
+			getColor() {
+				let color;
+				switch (this.type){
+					case 'setColor':
+						color = '#fff';
+						break;
+					case 'index':
+						color = '#fff';
+						break;
+					default:
+						color = '#999'; 
+						break;
+				}
+				return color;
 			}
 		},
 		created() {
@@ -233,7 +257,6 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 30rpx;
-		color: #fff;
 	}
 	
 </style>

@@ -1,4 +1,4 @@
-var n_tabsInfoChangeBl = false;	//确保外部tabsInfo改变
+var n_tabsInfoChangeCount = -1;	//确保外部tabsInfo改变
 
 function log(t) {
 	// log(t);
@@ -58,9 +58,8 @@ function tabsInfoChange(n, o, ins) {
 	var swiper = ins.selectComponent('#swiper');
 	var dataset = swiper.getDataset();
 	var tabsInfoChangeBl = dataset.tabsinfochangebl;
-	if(n_tabsInfoChangeBl !== tabsInfoChangeBl){
-		n_tabsInfoChangeBl = tabsInfoChangeBl;
-		log('触发了tabsInfoChange方法');
+	if(tabsInfoChangeBl === 'true'){
+		ins.callMethod('setTabsInfoChangeBl');
 		setCurDx(ins, false, true, false);
 	}
 	return false;
@@ -76,6 +75,7 @@ function animationfinish(e, ins) {
  function swiperChange(e, ins) {
 	log('触发了swiperChange方法:' + e.detail.current);
 	setCurDx(ins, e.detail.current, false, false);
+	ins.callMethod('setSwiperCurrent', e.detail);
 	return false;
  }
 

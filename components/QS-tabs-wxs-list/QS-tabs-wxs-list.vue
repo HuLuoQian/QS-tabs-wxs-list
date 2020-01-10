@@ -1,8 +1,14 @@
 <template>
-	<view class="container">
+	<view 
+	class="container"
+	:style="{
+		'z-index': zIndex
+	}">
 		<view 
 		class="tabs-container"
 		:style="{
+			'position': String(tabsSticky)==='true'?'sticky': 'relative',
+			'z-index': Number(zIndex) + 2,
 			'background-color': tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].tabsBackgroundColor || tabsBackgroundColor):tabsBackgroundColor
 		}">
 			<scroll-view 
@@ -29,8 +35,7 @@
 					@tap="tabTap(index)">
 						<view class="hide_text" 
 						:style="{
-							'font-size': fontSize,
-							'opacity': 0
+							'font-size': fontSize
 						}">
 							{{item.name || item}}
 						</view>
@@ -57,12 +62,17 @@
 				</view>
 			</scroll-view>
 		</view>
-		<view class="swiper-container">
+		<view 
+		class="swiper-container" 
+		:style="{
+			'z-index': Number(zIndex) + 1,
+			'background-color': tabs[getSwiperCurrent]?(tabs[getSwiperCurrent].swiperBackgroundColor||swiperBackgroundColor):swiperBackgroundColor
+		}">
 			<swiper 
 			id="swiper"
+			class="swiper"
 			:style="{
-				'height': getSwiperHieght + 'px',
-				'background-color': swiperBackgroundColor
+				'height': getSwiperHieght + 'px'
 			}"
 			:current="getSwiperCurrent"
 			@transition="QSTABSWXS.transition"
@@ -88,16 +98,19 @@
 						
 					</block>
 					<block v-else>
-						<templateDef ref="QSTabsWxsRef" :current="getCurrent" :tab="item" :index="index"></templateDef>
+						<templateDef ref="QSTabsWxsRef" :type="type" :current="getCurrent" :tab="item" :index="index"></templateDef>
 					</block>
 				</swiper-item>
 			</swiper>
 		</view>
 		<view 
 		class="disabled" 
+		:style="{
+			'z-index': Number(zIndex) + 3
+		}"
 		v-if="disabled"
-		@touchmove.stop="voidFn"
-		@tap.stop="voidFn">
+		@touchmove.stop="_emit('disabledTouchmove')"
+		@tap.stop="_emit('disabledTap')">
 			
 		</view>
 	</view>
@@ -193,6 +206,14 @@
 			type: {	//用于区分展示不同列表模板的标识
 				type: String,
 				default: 'default'
+			},
+			zIndex: {	//z-index属性值
+				type: [String, Number],
+				default: 99
+			},
+			tabsSticky: {	//tabs是否sticky定位(粘贴组件顶部)
+				type: [Boolean, String],
+				default: false
 			}
 		},
 		data() {
@@ -211,7 +232,7 @@
 				tabsHeight: 44,
 				wxsLineWidth: 0,
 				tabsInfoChangeBl: false,
-				disabled: false
+				disabled: false,
 			}
 		},
 		computed: {
@@ -267,7 +288,7 @@
 									// #endif
 								}
 							}
-							this.tabsInfoChangeBl = !this.tabsInfoChangeBl;
+							this.tabsInfoChangeBl = true;
 							// #ifdef H5
 							this.tabsInfo = JSON.stringify(arr);
 							// #endif
@@ -295,7 +316,7 @@
 					this.tabs = arr;
 					this.initStatus = new Array(arr.length);
 					this.$nextTick(()=>{	//H5需要nextTick后能拿到布局信息
-						setTimeout(async ()=>{	//QQ小程序需要setTimeout后能拿到布局信息
+						setTimeout(()=>{	//QQ小程序需要setTimeout后能拿到布局信息
 							this.getTabsInfo();
 							_app.log('初始化');
 							const defCurrent = this._getDefCurrent();
@@ -360,6 +381,9 @@
 				this.swiperCurrent = current;
 				this._doInit({index: current, slide: true});
 			},
+			setSwiperCurrent(obj) {
+				this.swiperCurrent = Number(obj.current);
+			},
 			tabTap(index) {
 				this.swiperCurrent = index;
 				this._doInit({index, tap: true});
@@ -368,6 +392,12 @@
 				_app.log('setScrollLeft:' + JSON.stringify(obj));
 				if((!(String(this.autoCenter) === 'true')) && !Boolean(obj.tabsChange)) return;
 				this.scrollLeft = Number(obj.scrollLeft);
+			},
+			setTabsInfoChangeBl() {
+				this.tabsInfoChangeBl = false;
+			},
+			_emit(name) {
+				this.$emit(name);
 			},
 			voidFn() {}
 		}
@@ -417,8 +447,11 @@
 		width: 100%;
 	}
 	.tabs-container{
+		top: 0;
+		left: 0;
 		width: 100%;
-		transition: background-color .3s;
+		transition-property: background-color;
+		transition-duration: .3s;
 	}
 	.tabs-scroll{
 		width: 100%;
@@ -437,6 +470,10 @@
 		text-align: center;
 		transition: color, font-size .3s;
 	}
+	.hide_text{
+		opacity: 0;
+		pointer-events: none;
+	}
 	.abs_text{
 		position: absolute;
 		top: 50%;
@@ -447,6 +484,8 @@
 	}
 	.swiper-container{
 		width: 100%;
+		transition-property: background-color;
+		transition-duration: .3s;
 	}
 	.swiper-item{
 		transition: background-color .3s;

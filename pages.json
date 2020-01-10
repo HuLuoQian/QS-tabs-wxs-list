@@ -1,11 +1,33 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path" : "pages/select/select",
+            "style" : {}
+        },
 		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTextStyle":"white"
 			}
 		}
+        ,{
+            "path" : "pages/setColor/setColor",
+            "style" : {
+				"navigationBarTextStyle":"white"
+			}
+        }
+        ,{
+            "path" : "pages/reset/reset",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/more/more",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/default/default",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

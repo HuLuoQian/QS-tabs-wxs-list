@@ -141,6 +141,14 @@ initFnName: {	//初始调用函数名称(组件内部)
 type: {	//用于区分展示不同列表模板的标识
 	type: String,
 	default: 'default'
+},
+zIndex: {	//z-index属性值
+	type: [String, Number],
+	default: 99
+},
+tabsSticky: {	//tabs是否sticky定位(粘贴组件顶部)
+	type: [Boolean, String],
+	default: false
 }
 ```
 # <span id="refs">ref调用函数</span>
@@ -160,6 +168,7 @@ type: {	//用于区分展示不同列表模板的标识
 |--------activeFontColor: 当前项文字颜色
 |--------tabsBackgroundColor: 当前项tabs背景颜色
 |--------lineColor: 当前项线条颜色
+|--------swiperBackgroundColor: 当前项swiper背景颜色
 |--------swiperItemBackgroundColor: 当前项swiper-item背景颜色
 ```
 
