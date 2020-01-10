@@ -103,6 +103,17 @@
 				</swiper-item>
 			</swiper>
 		</view>
+		<!-- #ifdef MP -->
+		<view 
+		class="disabled" 
+		:style="{
+			'z-index': Number(zIndex) + 3
+		}"
+		v-if="disabled"
+		@touchmove.prevent="_emit('disabledTouchmove')"
+		@tap.prevent="_emit('disabledTap')">
+		<!-- #endif -->
+		<!-- #ifndef MP -->
 		<view 
 		class="disabled" 
 		:style="{
@@ -111,6 +122,7 @@
 		v-if="disabled"
 		@touchmove.stop="_emit('disabledTouchmove')"
 		@tap.stop="_emit('disabledTap')">
+		<!-- #endif -->
 			
 		</view>
 	</view>

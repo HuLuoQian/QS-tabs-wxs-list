@@ -58,7 +58,7 @@ function tabsInfoChange(n, o, ins) {
 	var swiper = ins.selectComponent('#swiper');
 	var dataset = swiper.getDataset();
 	var tabsInfoChangeBl = dataset.tabsinfochangebl;
-	if(tabsInfoChangeBl === 'true'){
+	if(tabsInfoChangeBl === 'true' || tabsInfoChangeBl === true){
 		ins.callMethod('setTabsInfoChangeBl');
 		setCurDx(ins, false, true, false);
 	}
