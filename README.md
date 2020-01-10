@@ -1,3 +1,5 @@
+# `请先下载示例项目体验，页面右上角蓝色按钮`
+
 # QQ交流群: 750104037 [点我加入](https://jq.qq.com/?_wv=1027&k=5OyZoXa)
 
 # 注意: 目前若直接引入组件到项目中会报错, 因为方便示例演示, 在组件目录/components/QS-tabs-wxs-template-def.vue中的script标签最前面有引入示例用的js
@@ -8,13 +10,13 @@
 ### [支持度](#support)
 ### [使用须知](#notice-for-use)
 ### [传入参数](#props)
+### [事件](#events)
 ### [ref调用函数](#refs)
 ### [传入参数](#props)
 ### [使用步骤](#use-steps)
 
 # <span id="introduction">简介</span>
-使用wxs实现性能更好的tab线条滑动效果, 并使用swiper嵌套scrollview的方式集成了list<br />
-方便开发分类列表业务需求, 同时简化分页加载方式
+* ### 使用wxs实现性能更好的tab线条滑动效果, 并使用swiper嵌套scrollview的方式集成了list方便开发分类列表业务需求, 同时简化分页加载方式
 
 # <span id="project-structure">示例项目结构</span>
 ```
@@ -49,7 +51,7 @@
 ```
 
 # <span id="support">支持度</span>
-### 因wxs支持度原因，目前支持： APP(vue)、微信小程序、H5、QQ小程序
+* ### 因wxs支持度原因，目前支持： APP(vue)、微信小程序、H5、QQ小程序
 
 # <span id="notice-for-use">使用须知</span>
 * ### tabs数组不从组件传入, 而是使用ref调用setTabs方法设置tabs, 所以setTabs为组件必须调用方法, tabs可传参数详见[tabs参数详解](#tabs)
@@ -151,6 +153,12 @@ tabsSticky: {	//tabs是否sticky定位(粘贴组件顶部)
 	default: false
 }
 ```
+# <span id="events">事件</span>
+| 事件名称| 形参| 说明|
+|------|------|------|------|
+| disabledTap| | 组件disabled为true时，组件区域点击时触发|
+| disabledTouchmove| | 组件disabled为true时，组件区域滑动时触发|
+
 # <span id="refs">ref调用函数</span>
 | 方法名| 返回值| 传入参数| 说明|
 |------|------|------|------|
@@ -158,7 +166,7 @@ tabsSticky: {	//tabs是否sticky定位(粘贴组件顶部)
 | setDisabled| | Boolean| 设置组件是否可以被点击和滑动|
 
 # <span id="tabs">tabs参数详解</span>
-### 注: tabs由组件ref实例调用setTabs方法设置
+* ### 注: tabs由组件ref实例调用setTabs方法设置
 ```
 |tabs Array
 |----String
@@ -174,7 +182,8 @@ tabsSticky: {	//tabs是否sticky定位(粘贴组件顶部)
 
 # <span id="use-steps">使用步骤</span>
 ## Step 1:
-### 引入并注册组件
+* ### 引入并注册组件
+
 ```javascript
 <script>
 //页面中引入组件实例
@@ -186,8 +195,10 @@ export default {
 }
 </script>
 ```
+
 ## Step 2:
-### template标签内写入并绑定ref与动态高度
+* ### template标签内写入并绑定ref与动态高度
+
 ```html
 <template>
 	<view>
@@ -198,7 +209,8 @@ export default {
 ```
 
 ## Step 3:
-### 实现计算组件高度方法
+* ### 实现计算组件高度方法
+
 ```javascript
 <script>
 //页面中引入组件实例
@@ -223,7 +235,8 @@ export default {
 ```
 
 ## Step 4:
-### 设置tabs
+* ### 设置tabs
+
 ```javascript
 //页面中引入组件实例
 import QSTabsWxsList from '组件路径';
@@ -251,7 +264,8 @@ export default {
 </script>
 ```
 ## Step 5:
-### 后续需要详细看示例列表获取数据与分页加载的实现
+* ### 后续需要详细看示例列表获取数据与分页加载的实现
+
 
 
 

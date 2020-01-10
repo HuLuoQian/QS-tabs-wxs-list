@@ -74,7 +74,8 @@
 				statusText: {},
 				scrollTop: 0,	// 保证性能勿删
 				oldScrollTop: 0,	// 保证性能勿删
-				setScrollTopcount: 0	// 保证性能勿删
+				setScrollTopcount: 0,	// 保证性能勿删
+				refreshClear: true
 			}
 		},
 		watch: {
@@ -135,6 +136,7 @@
 			},
 			init() {
 				// console.log('component - init - index:' + this.index);
+				if(this.refreshClear) this.oldScrollTop = 0;
 				this.getList(true);
 			},
 			getList(refresh, doEvent, force) {
@@ -164,7 +166,7 @@
 
 					noDataText: false,	//访问接口后若数据长度为0则可自定义为空时文字
 					
-					refreshClear: true,	//刷新时是否清空数据
+					refreshClear: this.refreshClear,	//刷新时是否清空数据
 				})
 			},
 			itemClick(ind) {
