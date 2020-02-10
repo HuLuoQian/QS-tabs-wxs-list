@@ -1,34 +1,28 @@
 <!-- 该组件需自行实现, 此处只是示例 -->
 <template>
-	<view class="container">
-		<scroll-view 
-		scroll-y 
-		class="scrollView"  
-		lower-threshold="200"
-		:scroll-top="scrollTop"
-		@scroll="scrollFn($event)"
-		@scrolltolower="getList(false, false, false)">
+	<view class="container" :class="getFixedClass">
+		<scroll-view scroll-y class="scrollView" lower-threshold="200" :scroll-top="scrollTop" @scroll="scrollFn($event)"
+		 @scrolltolower="getList(false, false, false)">
+			<!-- 保证性能勿删 -->
 			<view class="scroll-container">
-				<block v-if="getShow">	<!-- 保证性能勿删 -->
+				<!-- 保证性能勿删 -->
+				<block v-if="getShow">
+					
 					<!-- 自行实现页面样式展示 -->
 					<view class="scroll-item" v-for="(item, ind) in list" :key="ind" @tap="itemClick(ind)">
-						<image 
-						class="scroll-item-image"
-						src="http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg" 
-						mode="aspectFill"></image>
+						<image lazy-load class="scroll-item-image" src="http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg"
+						 mode="aspectFill"></image>
 						<view class="scroll-item-text">
 							{{item}}
 						</view>
 					</view>
 					<!-- 列表状态展示 -->
-					<view 
-					class="statusText" 
-					@tap="getList(false, true, false)"
-					:style="{
+					<view class="statusText" @tap="getList(false, true, false)" :style="{
 						'color': getColor
 					}">
 						{{statusText.text || '数据未加载'}}
 					</view>
+					
 				</block>
 			</view>
 		</scroll-view>
@@ -36,6 +30,9 @@
 </template>
 
 <script>
+	// 组件必须
+	import { QSTabsWxsListMixin } from '../mixins/QS-tabs-wxs-list-mixin.js';
+	
 	import {
 		getTabList
 	} from '@/util/getTabList.js';
@@ -43,66 +40,23 @@
 		doPageDemand
 	} from '../js/pageDemand.js';
 	export default {
-		props: {
-			tab: {
-				type: [Object, String],
-				default () {
-					return {}
-				}
-			},
-			index: {	// 保证性能勿删
-				type: [String, Number],
-				default: ''
-			},
-			current: {	// 保证性能勿删
-				type: [String, Number],
-				default: ''
-			},
-			type: {
-				type: String,
-				default: ''
-			}
-		},
+		mixins: [QSTabsWxsListMixin()],// 组件必须
 		data() {
 			return {
 				list: [],
 				sendData: {
 					pageNum: 1,
-					pageSize: 10,
+					pageSize: 50,
 					tabId: this.tab.id
 				},
 				statusText: {},
-				scrollTop: 0,	// 保证性能勿删
-				oldScrollTop: 0,	// 保证性能勿删
-				setScrollTopcount: 0,	// 保证性能勿删
-				refreshClear: true
-			}
-		},
-		watch: {
-			// 保证性能勿删
-			getShow(newValue, oldValue) {
-				if(newValue === true) {
-					this.toOldScrollTop();
-				}
+				refreshClear: false
 			}
 		},
 		computed: {
-			// 保证性能勿删
-			getShow() {
-				if(this.index!=='' && this.current!=='') {
-					const count = Math.abs(Number(this.index) - Number(this.current));
-					if(count <= 1) {
-						return true;
-					}else{
-						return false;
-					}
-				}else{
-					return false;
-				}
-			},
 			getColor() {
 				let color;
-				switch (this.type){
+				switch (this.type) {
 					case 'setColor':
 						color = '#fff';
 						break;
@@ -110,7 +64,7 @@
 						color = '#fff';
 						break;
 					default:
-						color = '#999'; 
+						color = '#999';
 						break;
 				}
 				return color;
@@ -121,27 +75,17 @@
 			// console.log('component - created - index:' + this.index);
 		},
 		methods: {
-			scrollFn(e) {	// 保证性能勿删
-				if(e.detail.scrollTop !== 0) {
-					this.oldScrollTop = e.detail.scrollTop;
-				}
-				
-			},
-			toOldScrollTop() {	// 保证性能勿删
-				this.$nextTick(()=>{
-					setTimeout(()=>{
-						this.scrollTop = (this.setScrollTopcount++ % 2 === 0)?this.oldScrollTop + 1: this.oldScrollTop - 1;
-					}, 0)
-				})
-			},
-			init() {
-				// console.log('component - init - index:' + this.index);
-				if(this.refreshClear) this.oldScrollTop = 0;
-				this.getList(true);
+			init(refresh) {	//若是用户触发下拉刷新则refresh为true
+				if (this.refreshClear) this.oldScrollTop = 0;
+				this.getList(refresh, false, false);
 			},
 			getList(refresh, doEvent, force) {
+				let _this = this;
 				doPageDemand.call(this, {
 					getDataFn: getTabList, //获取数据的方法
+					success() {
+						if (refresh) _this.$emit('refreshEnd');
+					},
 					fail() {
 						console.log('访问接口失败');
 					}, //接口访问失败回调
@@ -164,9 +108,9 @@
 					force, //强制标识, 若为true则会忽略等待标识为true时的跳过操作
 					doEvent, //进入状态判断标识, 若为true则会进入判断列表status而进行相应操作
 
-					noDataText: false,	//访问接口后若数据长度为0则可自定义为空时文字
-					
-					refreshClear: this.refreshClear,	//刷新时是否清空数据
+					noDataText: false, //访问接口后若数据长度为0则可自定义为空时文字
+
+					refreshClear: this.refreshClear, //刷新时是否清空数据
 				})
 			},
 			itemClick(ind) {
@@ -179,86 +123,5 @@
 </script>
 
 <style scoped>
-	view,
-	scroll-view,
-	swiper,
-	swiper-item,
-	cover-view,
-	cover-image,
-	icon,
-	text,
-	rich-text,
-	progress,
-	button,
-	checkbox,
-	form,
-	input,
-	label,
-	radio,
-	slider,
-	switch,
-	textarea,
-	navigator,
-	audio,
-	camera,
-	image,
-	video,
-	picker-view,
-	picker-view-column {
-		box-sizing: border-box;
-	}
-	.container {
-		width: 100%;
-		height: 100%;
-	}
-
-	.scrollView {
-		width: 100%;
-		height: 100%;
-	}
-	
-	.scroll-container{
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 30rpx;
-	}
-	
-	.scroll-item{
-		width: 100%;
-		padding: 28rpx;
-		background-color: white;
-		border-radius: 8px;
-		display: flex;
-		flex-direction: row;
-		margin-bottom: 35rpx;
-	}
-	
-	.scroll-item-image{
-		background-color: #F8F8F8;
-		border-radius: 8px;
-		height: 220rpx;
-		width: 40%;
-	}
-	
-	.scroll-item-text{
-		width: 55%;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-		font-size: 16px;
-		color: #666;
-	}
-	
-	.statusText {
-		height: 40px;
-		width: 100%;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-		font-size: 30rpx;
-	}
-	
+	@import url("../css/QS-tabs-wxs-list-components.css");
 </style>

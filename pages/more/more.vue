@@ -11,6 +11,8 @@
 		</view>
 		<QSTabsWxs 
 		ref="QSTabsWxs" 
+		hasRefresh
+		refreshImage="/static/refresh.png"
 		minWidth="125rpx" 
 		type="more"
 		:height="windowHeight-topViewHeight"></QSTabsWxs>

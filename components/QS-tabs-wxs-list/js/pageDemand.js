@@ -31,6 +31,8 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 	let _this = this;
 	let {
 		getDataFn,	//获取数据的方法
+		success, //接口访问成功回调
+		successEnd, //成功回调结束时
 		fail,	//接口访问失败回调
 		
 		sendDataName,	//携带数据字段名称
@@ -86,7 +88,7 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 		_this[sendDataName][pageNumName] = 1;
 		_this[lastPageName] = undefined;	//重置最后一页状态
 		
-		if(refreshClear) {
+		if(refreshClear) {	//刷新是否清空数据
 			_this[setName] = [];
 		}
 	}
@@ -118,6 +120,7 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 	// 访问接口
 	getDataFn({ ...sendData
 	}).then(res => {
+		if(success && typeof success == 'function') success(res);
 		_app.log('page.js获取数据成功:' + JSON.stringify(res));
 		// 获取列表数据
 		const newList = getField(res, newDatafields);
@@ -188,6 +191,7 @@ function doPageDemand(obj) {	//分页加载获取数据方法, 页面使用call�
 		_this[statusTextName] = status;
 		// 重置等待标识
 		_this[waitingName] = false;
+		if(successEnd && typeof successEnd == 'function') successEnd(res);
 	}).catch(err => {
 		_app.log('pageJS异常:' + JSON.stringify(err));
 		// 获取数据异常,可点击重新加载

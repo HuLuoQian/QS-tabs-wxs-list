@@ -11,7 +11,10 @@
 		</view>
 		<QSTabsWxs 
 		ref="QSTabsWxs" 
+		hasRefresh
+		refreshImage="/static/refresh.png"
 		activeFontColor="#fff" 
+		refreshTextColor="#fff"
 		tabsFontColor="rgba(255,255,255,.7)" 
 		tabsBackgroundColor="#000" 
 		swiperBackgroundColor="#000" 

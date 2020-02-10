@@ -5,7 +5,7 @@ let DATA = {};
 for (let i = 0; i < tab.length; i++) {
 	const arr = [];
 	for (let k = 0; k < 100; k++) {
-		arr.push(tab[i] + ' ' + k);
+		arr.push(tab[i] + ' ' + k + '项');
 	}
 	DATA[tab[i]] = arr;
 }
@@ -30,7 +30,7 @@ function mock(obj) {
 			} else {
 				reject();
 			}
-		}, 300)
+		}, 500)
 	})
 }
 

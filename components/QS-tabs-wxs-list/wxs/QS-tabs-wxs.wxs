@@ -1,5 +1,3 @@
-var n_tabsInfoChangeCount = -1;	//确保外部tabsInfo改变
-
 function log(t) {
 	// log(t);
 }

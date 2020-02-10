@@ -11,7 +11,10 @@
 		</view>
 		<QSTabsWxs 
 		ref="QSTabsWxs" 
+		hasRefresh
+		refreshImage="/static/refresh.png"
 		activeFontColor="#fff" 
+		refreshTextColor="#fff"
 		tabsFontColor="rgba(255,255,255,.7)" 
 		tabsBackgroundColor="#000" 
 		swiperBackgroundColor="#000" 
@@ -75,6 +78,8 @@
 		justify-content: space-between;
 		align-items: center;
 		font-size:  18px;
+		background: #000;
+		color: #fff;
 		padding: var(--status-bar-height) 20px 0 20px;
 	}
 	.topViewItem{

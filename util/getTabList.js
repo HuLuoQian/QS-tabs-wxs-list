@@ -13,7 +13,7 @@ function filterTabList(page) {	//过滤数据
 	for(let i = 0; i < list.length; i++) {
 		let item = list[i];
 		
-		item += (' 过滤 ' + i);
+		item += (' 过滤');
 		
 		list[i] = item;
 	}
