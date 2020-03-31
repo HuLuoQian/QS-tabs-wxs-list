@@ -253,7 +253,7 @@
 				wxsLineWidth: 0,
 				tabsInfoChangeBl: false,
 				disabled: false,
-				refreshStatus: 1,
+				refreshStatus: 0,
 				// #ifndef H5
 				readyRefresh: false,
 				refreshShow: false,
@@ -276,6 +276,9 @@
 			},
 			getRefreshStatusText() {
 				switch (this.refreshStatus){
+					case 0:
+						return this.beforRefreshText;
+						break;
 					case 1:
 						return this.beforRefreshText;
 						break;
@@ -310,7 +313,7 @@
 						break;
 					case 5:
 						setTimeout(()=>{
-							this.setRefreshStatus(1);
+							this.setRefreshStatus(0);
 							this.refreshShow = false;
 						}, 1000);
 						break;

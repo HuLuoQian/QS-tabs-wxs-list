@@ -5,7 +5,7 @@ var touchstart = function(e, ins) {
 	var refreshContianer = ins.selectComponent('#refresh-container');
 	var dataset = refreshContianer.getDataset();
 	var refreshStatus = parseInt(dataset.refreshstatus);
-	if (refreshStatus === 1) {
+	if (refreshStatus === 0) {
 		refreshContianer.setStyle({
 			'transition': '0s'
 		})
@@ -18,7 +18,7 @@ var touchmove = function(e, ins) {
 	// console.log('dataset:');
 	// console.log(dataset);
 	var refreshStatus = parseInt(dataset.refreshstatus);
-	if (refreshStatus === 1 || refreshStatus === 2) {
+	if (refreshStatus === 0 || refreshStatus === 1 || refreshStatus === 2) {
 		var moveY = e.touches[0].pageY;
 		var diffY = (moveY - startY) * 0.5;
 		if (diffY < 0) {
@@ -51,9 +51,13 @@ var touchmove = function(e, ins) {
 		var refreshDistance = parseFloat(dataset.refreshdistance);
 		if (diffY >= refreshDistance) {
 			if (refreshStatus !== 2) ins.callMethod('setRefreshStatus', 2);
-		} else {
+		} else if(diffY > 0) {
 			if (refreshStatus !== 1) {
 				ins.callMethod('setRefreshStatus', 1);
+			}
+		} else {
+			if (refreshStatus !== 0) {
+				ins.callMethod('setRefreshStatus', 0);
 			}
 		}
 	}
