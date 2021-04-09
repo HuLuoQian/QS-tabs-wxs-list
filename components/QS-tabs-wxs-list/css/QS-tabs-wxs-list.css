@@ -1,0 +1,166 @@
+.container {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.freeze {
+	height: 100%;
+	overflow: hidden;
+}
+
+.disabled {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.tabs-container {
+	top: 0;
+	left: 0;
+	width: 100%;
+	transition-property: background-color;
+	transition-duration: .3s;
+}
+
+.tabs-scroll {
+	width: 100%;
+	white-space: nowrap;
+	position: relative;
+}
+
+.tabs-scroll-box {
+	position: relative;
+	display: flex;
+	white-space: nowrap !important;
+	display: block !important;
+}
+
+.tabs-scroll-item {
+	position: relative;
+	display: inline-block;
+	text-align: center;
+	transition: color, font-size .3s;
+}
+
+.hide_text {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.abs_text {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	transition-property: color;
+	transition-duration: .3s;
+}
+
+.swiper-container {
+	width: 100%;
+	transition-property: background-color;
+	transition-duration: .3s;
+	overflow: hidden;
+}
+
+.swiper-item {
+	transition: background-color .3s;
+}
+
+.line {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	transition-property: width, height, background-color, border;
+	transition-duration: .3s;
+}
+
+/* refresh */
+.refresh-container {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.refresh-image-container {
+	position: absolute;
+	left: 0;
+	top: 0;
+	transform: translateY(-100%);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	transition-property: opacity;
+	transition-duration: .3s;
+}
+
+
+.refresh-image {
+	height: 80rpx;
+	width: 80rpx;
+}
+
+.refreshText {
+	margin-top: 15rpx;
+}
+
+.container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.scrollView {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.scroll-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30rpx;
+}
+
+
+.vShowView{
+	width: 100%;
+	position: relative;
+}
+.vShow-item{
+	transition: background-color .3s;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+.vShow-active{
+	opacity: 1;
+	pointer-events: auto;
+}
+.vShow-line{
+	/* position: absolute;
+	left: 50%;
+	transform: translateX(-50%); */
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	transition-property: width, height, background-color, border, transform;
+	transition-duration: .3s;
+}

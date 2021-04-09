@@ -1,0 +1,152 @@
+var tabsInfosObj = {};
+
+var touchstart = function(e, ins) {
+	var obj = getObj(ins);
+	
+	if(!obj.currentReadyRefresh) return;
+	
+	obj.startY = e.touches[0].pageY;
+	var refreshContianer = ins.selectComponent('#refresh-container');
+	if (obj.refreshStatus === 1) {
+		refreshContianer.setStyle({
+			'transition': '0s'
+		})
+	}
+	if(obj.touchStatus!==0) obj.touchStatus = 0;
+}
+
+var touchmove = function(e, ins) {
+	var obj = getObj(ins);
+	
+	if(!obj.currentReadyRefresh) return;
+	var refreshContianer = ins.selectComponent('#refresh-container');
+	if (obj.refreshStatus === 1 || obj.refreshStatus === 2) {
+		var moveY = e.touches[0].pageY;
+		var diffY = (moveY - obj.startY) * 0.5;
+		if (diffY < 0) {
+			diffY = 0;
+		} else {
+			if (obj.readyRefresh === false) {
+				ins.callMethod('setReadyRefresh', {
+					readyRefresh: true
+				});
+			}
+			if (obj.refreshShow === false) {
+				ins.callMethod('setRefreshShow', {
+					refreshShow: true
+				});
+			}
+		}
+		refreshContianer.setStyle({
+			'transform': 'translateY(' + (diffY) + 'px)'
+		})
+
+		var refreshImageComponent = ins.selectComponent('#refreshImage');
+		if (refreshImageComponent) {
+			refreshImageComponent.setStyle({
+				'transform': 'rotate(' + (diffY*10) + 'deg)'
+			})
+		}
+
+		if (diffY >= obj.refreshDistance) {
+			if (obj.refreshStatus !== 2) ins.callMethod('setRefreshStatus', 2);
+		} else {
+			if (obj.refreshStatus !== 1) {
+				ins.callMethod('setRefreshStatus', 1);
+			}
+		}
+	}
+	if(obj.touchStatus!==1) obj.touchStatus = 1;
+}
+
+var touchend = function(e, ins) {
+	var obj = getObj(ins);
+	
+	if(!obj.currentReadyRefresh) return;
+	var refreshContianer = ins.selectComponent('#refresh-container');
+	if (obj.refreshStatus === 1 || obj.refreshStatus === 2) {
+		ins.callMethod('setReadyRefresh', {
+			readyRefresh: false
+		});
+		if (obj.refreshStatus === 2) {
+			ins.callMethod('setRefreshStatus', 3);
+			refreshContianer.setStyle({
+				'transform': 'translateY(' + obj.refreshDistance + 'px)',
+				'transition': '.3s'
+			})
+		} else {
+			if(obj.touchStatus === 1) {
+				refreshContianer.setStyle({
+					'transform': 'translateY(0)',
+					'transition': '.3s'
+				})
+				ins.callMethod('setRefreshShow', {
+					refreshShow: false
+				});
+			}
+		}
+	}
+	if(obj.touchStatus!==2) obj.touchStatus = 2;
+}
+
+var refreshStatusChange = function(n, o, ins) {
+	var obj = getObj(ins);
+	
+	obj.refreshStatus = n;
+	if (n === 4 || n === 5) {
+		var refreshContianer = ins.selectComponent('#refresh-container');
+		refreshContianer.setStyle({
+			'transform': 'translateY(0)',
+			'transition': '.3s 1s'
+		})
+		ins.callMethod('setRefreshStatus', 6);
+	}
+}
+
+var refreshShowChange = function (n, o, ins) {
+	var obj = getObj(ins);
+	obj.refreshShow = n
+}
+
+var readyRefreshChange = function (n, o, ins) {
+	var obj = getObj(ins);
+	obj.readyRefresh = n
+}
+
+var refreshDistanceChange = function (n, o, ins) {
+	var obj = getObj(ins);
+	obj.refreshDistance = n
+}
+
+var curReadyRefreshChange = function (n, o, ins) {
+	var obj = getObj(ins);
+	obj.currentReadyRefresh = n;
+}
+
+function getObj(ins) {
+	var swiper = ins.selectComponent('#swiper');
+	var dataset = swiper.getDataset();
+	var componentId = dataset.componentid;
+	if(!tabsInfosObj[componentId]) tabsInfosObj[componentId] = {
+		startY: 0,
+		touchStatus: 0,
+		refreshStatus: 1,
+		refreshShow: false,
+		readyRefresh: false,
+		refreshDistance: 90,
+		currentReadyRefresh: true
+	}
+	
+	return tabsInfosObj[componentId];
+}
+
+module.exports = {
+	touchstart: touchstart,
+	touchmove: touchmove,
+	touchend: touchend,
+	refreshStatusChange: refreshStatusChange,
+	refreshShowChange: refreshShowChange,
+	readyRefreshChange: readyRefreshChange,
+	refreshDistanceChange: refreshDistanceChange,
+	curReadyRefreshChange: curReadyRefreshChange
+}
