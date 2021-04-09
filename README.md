@@ -1,4 +1,6 @@
-## android端建议使用[QS-tabs-list Nvue版 ](https://ext.dcloud.net.cn/plugin?id=1399)
+# [`终极详解！终极详解！若看不懂请弃用该组件, 及时止损`](#super-readme)
+
+## android端若性能不够则建议使用[QS-tabs-list Nvue版 ](https://ext.dcloud.net.cn/plugin?id=1399)
 
 * ## `请先下载示例项目体验，页面右上角蓝色按钮`
 * ## `若觉得复杂不会用请先加群交流不要盲目主观下定论`

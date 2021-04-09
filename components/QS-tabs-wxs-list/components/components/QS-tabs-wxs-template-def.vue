@@ -3,7 +3,7 @@
 	<!-- 为性能缘故, 当tab项多时, 请尽量不要删除 v-if="show" -->
 	
 	<view v-if="show">
-		<QSMasonry :list="list" hasImage padding="0" @updated="updated"></QSMasonry>
+		<!-- <QSMasonry :list="list" hasImage padding="0" @updated="updated"></QSMasonry> -->
 		<!-- 列表状态展示 -->
 		<view class="statusText" @tap="getList(false, true, false)" :style="{
 			'color': getColor
@@ -14,9 +14,9 @@
 </template>
 
 <script>
-	import {
-		getTabList
-	} from '@/util/getTabList.js';
+	// import {
+	// 	getTabList
+	// } from '@/util/getTabList.js';
 	import {
 		doPageDemand
 	} from '../../js/pageDemand.js';
@@ -98,7 +98,7 @@
 			getList(refresh, doEvent, force) {
 				let _this = this;
 				doPageDemand.call(_this, {
-					getDataFn: getTabList, //获取数据的方法
+					//getDataFn: getTabList, //获取数据的方法
 					successEnd() {
 						if (refresh) _this.$emit('refreshEnd', true);
 					},
